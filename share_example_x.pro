@@ -6,12 +6,10 @@ QT += qml quick core
 
 CONFIG += c++11
 
-HEADERS += cpp/shareutils.hpp \
-    cpp/applicationui.hpp
+HEADERS += \
 
 SOURCES += cpp/main.cpp \
-    cpp/shareutils.cpp \
-    cpp/applicationui.cpp
+
 
 lupdate_only {
     SOURCES +=  qml/main.qml
@@ -26,13 +24,21 @@ OTHER_FILES += data_assets/*.png \
     LICENSE \
     COPYRIGHT
 
-# can be placed under ios only, but I prefer to see them always
-OTHER_FILES += ios/src/*.mm
+# IMPORTANT must be included before extensions/vendor
+# Default rules for deployment.
+# include(deployment.pri)
 
-# can be placed under android only, but I prefer to see them always
-OTHER_FILES += android/src/org/ekkescorner/utils/QShareUtils.java \
-    android/src/org/ekkescorner/examples/sharex/QShareActivity.java \
-    android/src/org/ekkescorner/utils/QSharePathResolver.java
+
+# Make version info available to C++ and QML
+VERSION = 1.0.0
+
+message("QtShareUtils $$VERSION")
+
+
+# Includes QtFirebase:
+include(extensions/QtShareUtils/qtshareutils.pri)
+
+
 
 RESOURCES += qml.qrc \
     data_assets.qrc
@@ -61,22 +67,10 @@ DISTFILES += \
     data_assets/ekke.jpg
 
 android {
-    QT += androidextras
-
-    SOURCES += cpp/android/androidshareutils.cpp
-
-    HEADERS += cpp/android/androidshareutils.hpp
-
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
 
 ios {
-    OBJECTIVE_SOURCES += ios/src/iosshareutils.mm \
-    ios/src/docviewcontroller.mm
-
-    HEADERS += cpp/ios/iosshareutils.hpp \
-    cpp/ios/docviewcontroller.hpp
-
     QMAKE_INFO_PLIST = ios/Info.plist
 
     QMAKE_IOS_DEPLOYMENT_TARGET = 10.0
@@ -102,3 +96,6 @@ ios {
     # Note for devices: 1=iPhone, 2=iPad, 1,2=Universal.
     QMAKE_APPLE_TARGETED_DEVICE_FAMILY = 1,2
 }
+
+INCLUDEPATH += \
+    $$PWD/extensions/QtShareUtils/cpp
